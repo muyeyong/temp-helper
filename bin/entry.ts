@@ -1,15 +1,14 @@
 
-import  {program } from"commander" // 配置命令
-import { blue } from "chalk" // 彩色字体
-import inquirer from "inquirer"
+// import  {program } from"commander" // 配置命令
+// import { blue } from "chalk" // 彩色字体
+// import inquirer from "inquirer"
 import createMicroApp from "./create"
+const inquirer = require('inquirer')
 // import ora from 'ora' // loading效果
 // import figlet from 'figlet' // 艺术字
 // const  createMicroApp  from'./create')
 
 // 获取传入的路径，在哪里创建微应用
-program.parse(process.argv)
-console.log(blue('lvHelper'))
 const NAME: any = '微应用名'
 
 inquirer.prompt([ {
@@ -21,7 +20,6 @@ inquirer.prompt([ {
     }
   },]).then((input: string) => {
     const appName = input[NAME]
-    console.log(appName)
     // 本地创建子应用
     createMicroApp(appName)
     // 拉去代码库

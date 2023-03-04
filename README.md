@@ -5,3 +5,5 @@
     用import导入有问题
 参考：https://github.com/liyongning/ts-cli
 
+对于ESModule的引用打包一直有问题，最终还是用require解决的。。。
+
