@@ -4,6 +4,7 @@ import ora from 'ora'
 import fse from 'fs-extra'
 import path from 'path'
 import { green, red } from "chalk"
+import { spawn } from 'child_process'
 import { createRouteConfig, createViteConfig } from '../dynicConfig/index'
 
 const NAME: any = '微应用名'
@@ -35,12 +36,12 @@ const updateMainAppMicronConfig = (appName: string, appType: string) => {
     const ports = apps.map(app => {
         return getUrlPort(app.entry)
     })
-    const newPort = Number(ports.sort().pop()) + 1
+    const newPort = ports.length > 0 ?  Number(ports.sort().pop()) + 1 : 8000
     const newEntry = `http://localhost:${newPort}`
     newConfig.devEntry = newEntry
     newConfig.entry = newEntry
     apps.push(newConfig)
-    fse.writeJSONSync(configPath, apps)
+    fse.writeJSONSync(configPath, { apps })
     return newConfig
 }
 
@@ -52,6 +53,7 @@ const dynicGenerationMicroConfig = (appName: string, appPort: number | string) =
         const viteConfigPath = path.join(cwd,'packages', appName, 'vite.config.ts')
         const routConfigPath = path.join(cwd, 'packages', appName, 'src', 'router', 'index.ts')
         const packagePath = path.join(cwd, 'packages', appName, 'package.json')
+        fse.mkdirSync(path.join(cwd, 'packages', appName, 'src', 'router'))
         fse.writeFileSync(viteConfigPath, viteConfig)
         fse.writeFileSync(routConfigPath, routConfig)
         const packageObj = fse.readJSONSync(packagePath)
@@ -61,6 +63,18 @@ const dynicGenerationMicroConfig = (appName: string, appPort: number | string) =
     } catch (error) {
         console.log(red(error))
     }
+}
+
+const beautiful = (appName: string) => {
+    const command = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
+    const child1 = spawn(command, ['install'], { stdio: 'inherit', cwd: process.cwd()})
+    const child2 = spawn(command, ['run', 'prettier'], { stdio: 'inherit', cwd: process.cwd()})
+    child1.on('close',() =>  {
+        console.log(green(`${appName}依赖下载完成`))
+    })
+    child2.on('close', () => {
+        console.log(green('格式化代码完成'))
+    })
 }
 
 const createMicroApp = () => {
@@ -87,8 +101,9 @@ const createMicroApp = () => {
             const newConfig = updateMainAppMicronConfig(appName, appType)
             const port = getUrlPort(newConfig.entry)
             dynicGenerationMicroConfig(appName, port)
+            beautiful(appName)
         }).catch((err) => {
-            spinner.fail(`下载失败:${err}`)
+            spinner.fail(err)
         })
     });
 }

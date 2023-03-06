@@ -10,7 +10,7 @@ async function downloadFromGit(appName: string, templateType: string) {
     else if(templateType === 'react') templateType = TemplateType.reactMicro
     const { result, success, message } = getTemplateUrl(templateType)
     if (success) {
-        return await download(`direct:${result}`, path.join(`${process.cwd()}${path.sep}packages`, appName), { clone: true })
+        return await download(`direct:${result}`, path.join(process.cwd(),'packages', appName), { clone: true })
     } else {
         return Promise.reject(new Error(message))
     }
