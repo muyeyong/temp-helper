@@ -1,7 +1,8 @@
-const { promisify } = require('util')
-const download = promisify(require('download-git-repo'))
-const { getTemplateUrl } = require('../utils/config')
-const path = require('path')
+import  { promisify } from 'util'
+import downloadGit from 'download-git-repo'
+import { getTemplateUrl } from '../utils/config'
+import path from 'path'
+const download = promisify(downloadGit)
 
 // TODO 支持不同模板，拉取不同仓库的代码
  async function createMicroApp(appName = 'subApp', templateType = 'Vue') {

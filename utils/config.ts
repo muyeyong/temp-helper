@@ -1,12 +1,14 @@
-const fse = require('fs-extra')
-const path = require('path')
+import fse from 'fs-extra'
+import  path from 'path'
+
+const templateGitSuffix = '_GIT_TEMPLATE_URL'
 
 function isUrl (url: string) {
   return /^https?:\/\/.+/.test(url)
 }
 
 const getTemplateTypes = (configObj: any) => {
-  return Object.keys(configObj).map(config => config.replace('_GIT_TEMPLATE_URL', '').toLocaleLowerCase())
+  return Object.keys(configObj).map(config => config.replace(templateGitSuffix, '').toLocaleLowerCase())
 }
 
 const getTemplateUrl = (template: string) => {
@@ -14,20 +16,11 @@ const getTemplateUrl = (template: string) => {
   const configObj = fse.readJSONSync(path.join(__dirname, '../bin/config.json'))
   const templateTypes =  getTemplateTypes(configObj)
   if (!templateTypes.includes(template)) {
-    return { success: false, message: `仅支持${templateTypes.join('、')}类型模板`}
+    return { success: false, message: `暂不支持${template}类型模板`}
   }
-  let result = ''
-  switch (template) {
-    case 'vue':
-      result = configObj['VUE_GIT_TEMPLATE_URL']
-      break;
-    case 'react':
-      result = configObj['React_GIT_TEMPLATE_URL']
-      break
-    default:
-      break;
-  }
-  return { success: true, result, message: `${template}模板url获取成功` }
+
+  let result = configObj[`${template.toUpperCase()}${templateGitSuffix}`] || ''
+  return { success: result === '' ? false : true, result, message: result === '' ? `${template}模板url获取失败` : `${template}模板url获取成功` }
 }
 
 const setTemplateUrl = (template: string,  url: string) => {
@@ -42,17 +35,14 @@ const setTemplateUrl = (template: string,  url: string) => {
   if (!templateTypes.includes(template)) {
     return { success: false, message: `仅支持${templateTypes.join('、')}类型模板`}
   }
- 
-  switch(template) {
-    case 'vue': 
-      configObj['VUE_GIT_TEMPLATE_URL'] = url
-      break
-    case 'react': 
-      configObj['REACT_GIT_TEMPLATE_URL'] = url
-      break
+  const key = `${template.toUpperCase()}${templateGitSuffix}`
+  if (key in configObj) {
+    configObj[key] = url
+    fse.writeJSONSync(path.join(__dirname, '../lib/config.json'), configObj)
+    return { success: true, message: `${template}模板url设置成功`}
+  } else {
+    return { success: false, message: `${template}模板url设置失败`}
   }
-  fse.writeJSONSync(path.join(__dirname, '../lib/config.json'), configObj)
-  return { success: true, message: `${template}模板url设置成功`}
 }
 
 export {

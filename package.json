@@ -7,8 +7,7 @@
     "lvHelper": "./index.js"
   },
   "scripts": {
-    "build": "webpack",
-    "build:tsc": "tsc --build",
+    "build": "tsc --build --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -21,13 +20,9 @@
     "@types/fs-extra": "^11.0.1",
     "@types/inquirer": "^9.0.3",
     "@types/node": "^18.14.5",
-    "babel-loader": "^9.1.2",
     "json-loader": "^0.5.7",
-    "ts-loader": "^9.4.2",
     "tslib": "^2.5.0",
-    "typescript": "^4.9.5",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "chalk": "4.1.2",

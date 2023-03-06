@@ -4,7 +4,7 @@ declare const getTemplateUrl: (template: string) => {
     result?: undefined;
 } | {
     success: boolean;
-    result: string;
+    result: any;
     message: string;
 };
 declare const setTemplateUrl: (template: string, url: string) => {
