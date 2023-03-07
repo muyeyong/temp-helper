@@ -1,9 +1,8 @@
-1: 使用ts
-2：创建一个微应用，并且会修改主应用的配置（启动命令、微应用配置...）
+# lv-helper
 
-## questions
-    用import导入有问题
-参考：https://github.com/liyongning/ts-cli
+> `7000-web`的配套工具
 
-对于ESModule的引用打包一直有问题，最终还是用require解决的。。。
+## 功能
+
++ lv-helper addMicroApp 实现添加微应用
 
